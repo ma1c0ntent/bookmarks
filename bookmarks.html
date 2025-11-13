@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookmarks</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f7fafc, #e0f7fa);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Heading */
+        h1 {
+            text-align: center;
+            color: #2d89ef;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Horizontal Category Bar */
+        .category-bar {
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(45deg, #6ecefb, #73e8f4);
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .category-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            margin: 0 12px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .category-item:hover {
+            background: #2d89ef;
+            transform: scale(1.05);
+        }
+
+        .category-item.active {
+            background: #0078d4;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Bookmark List */
+        .bookmark-list {
+            display: block;
+            padding: 15px;
+            background: #ffffff;
+            border: 1px solid #d1e3f0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: -10px;
+        }
+        
+        .bookmark-list.hidden {
+            display: none; /* Collapsed categories use this class */
+        }
+
+        .bookmark-item {
+            border-left: 5px solid #2d89ef;
+            margin: 15px 20px;
+            padding: 15px;
+            background: #f4faff;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .bookmark-item:hover {
+            background: #e0efff;
+            transform: translateX(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .bookmark-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #0078d4;
+            text-decoration: none;
+        }
+
+        .bookmark-name:hover {
+            text-decoration: underline;
+            color: #005a9e;
+        }
+
+        .bookmark-description {
+            font-size: 0.95rem;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        /* Search Box */
+        .search-box {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #b6ddfc;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-input:focus {
+            border: 2px solid #0078d4;
+            box-shadow: 0 0 8px rgba(0, 120, 212, 0.4);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Bookmarks</h1>
+        
+        <!-- Search Box -->
+        <div class="search-box">
+            <input id="searchInput" class="search-input" type="text" placeholder="Search bookmarks..." onkeyup="filterBookmarks()">
+        </div>
+
+        <!-- Horizontal Category Bar -->
+        <div class="category-bar">
+            <div class="category-item" onclick="showAllCategories(this)">All</div>
+            <div class="category-item" onclick="showOnlyCategory('Documentation', this)">Documentation</div>
+            <div class="category-item" onclick="showOnlyCategory('News', this)">News</div>
+            <div class="category-item" onclick="showOnlyCategory('Training Resources', this)">Training Resources</div>
+            
+        </div>
+
+        <!-- Bookmark Dropdowns -->
+
+
+        <!-- Training Resources -->
+        <div id="Training Resources" class="bookmark-list">
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://learning.cisa.gov/login/index.php" target="_blank">CISA</a>
+                <div class="bookmark-description">Cybersecurity & Infrasturcture Security Agency</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://rol.redhat.com/rol/app/" target="_blank">Red Hat Learning</a>
+                <div class="bookmark-description">Red Hat Open Learning</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://securitytraining.dcsa.mil/login/index.php" target="_blank">STEPP (Formerly  CDSE)</a>
+                <div class="bookmark-description">Security Training, Education, and Profresionalization Portal</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://www.geeksforgeeks.org/" target="_blank">Geeks for Geeks</a>
+                <div class="bookmark-description">All-in-One Learning Portal. It contains well written, well thought and well explained computer science and programming articles, quizzes and practice/competitive programing/company interview Questions.</div>
+            </div>
+        </div>
+
+        <!-- Documentation -->
+        <div id="Documentation" class="bookmark-list">
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://semver.org/spec/v2.0.0.html" target="_blank">Semantic Versioning 2.0.0</a>
+                <div class="bookmark-description">Semantic Versioning is a structured versioning system that uses a three-part number format: MAJOR.MINOR.PATCH</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://keepachangelog.com/en/1.0.0/" target="_blank">Keep a Changelog</a>
+                <div class="bookmark-description">Community-driven initiative offering guildlines for creating clear, structured, and categorized changelogs that enhance transparency and communition about project updates.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://stackoverflow.com" target="_blank">Stack Overflow</a>
+                <div class="bookmark-description">Community Q&A for programmers.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://github.com" target="_blank">GitHub</a>
+                <div class="bookmark-description">Code collaboration and hosting platform.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://learn.microsoft.com/en-us/powershell" target="_blank">PowerShell Docs</a>
+                <div class="bookmark-description">Microsoft's official PowerShell documentation.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a>
+                <div class="bookmark-description">Mozilla Developer Network's web documentation.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://docs.microsoft.com/en-us/dotnet" target="_blank">.NET Docs</a>
+                <div class="bookmark-description">Microsoft's official .NET documentation.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://quickref.me/" target="_blank">Quick Reference Cheatsheets</a>
+                <div class="bookmark-description">Cheatsheets and quick references for various programming languages, commands, and tools.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://quickref.me/chmod.html" target="_blank">CHMOD Cheatsheet</a>
+                <div class="bookmark-description">Quick Reference cheat sheet provides brief overview of file permissions, and the operation of the chmod command. </div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://quickref.me/awk" target="_blank">AWK Cheatsheet</a>
+                <div class="bookmark-description">Quick reference cheat sheet to the GNU awk, which covers commonly used awk expressions and commands.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://docs.python.org/3/library/logging.html#logging.Logger" target="_blank">Python Logging Module</a>
+                <div class="bookmark-description">This module defines functions and classes which implement a flexible event logging system for applications and libraries.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://docs.python.org/3/library/argparse.html#" target="_blank">Python Argparse Module</a>
+                <div class="bookmark-description">This module makes it easy to write user-friendly command-line interfaces. The program defines what argument ir requires, and argparse will figure out hwo to parse those out of sys.argv.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://quickref.me/regex" target="_blank">Regex Cheatsheet</a>
+                <div class="bookmark-description">Quick reference cheat sheet for regular expressions (regex), including symbols, ranges, grouping, assertions and some sample patterns to get you started.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://regex101.com/" target="_blank">Regex Tester</a>
+                <div class="bookmark-description">A website used to learn, develop, and test regular expressions in multiple languages.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://docs.ansible.com/" target="_blank">Ansible Documentation</a>
+                <div class="bookmark-description">Ansible's official community documentation.</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://docs.splunk.com/Documentation/Splunk/9.4.2/Admin/Inputsconf" target="_blank">Splunk Inputs Conf</a>
+                <div class="bookmark-description">Splunk's Official documentation for using the inputs configuration file. It also goes over how to configure the different monitor types (parsers).</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://www.nist.gov/publications/search?ta%5B0%5D=249421" target="_blank">NIST Special Publications</a>
+                <div class="bookmark-description">This publications database includes many of the most recent publications of the National Institute of Standards and Technology  (NIST).</div>
+            </div>
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://attack.mitre.org/" target="_blank">MITRE ATT&CK</a>
+                <div class="bookmark-description">MITRE's ATT&CK framework for incident response.</div>
+            </div>
+        </div>
+
+        <!-- News -->
+        <div id="News" class="bookmark-list">
+            <div class="bookmark-item">
+                <a class="bookmark-name" href="https://www.defensenews.com/" target="_blank">Defense News</a>
+                <div class="bookmark-description">Defense News is a global website and magazine about the politics, business and technology of defense, serving senior military and insutry decision-makers.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show only the selected category and collapse others
+        function showOnlyCategory(categoryId, clickedElement) {
+            // Collapse all bookmark lists
+            const allLists = document.querySelectorAll('.bookmark-list');
+            allLists.forEach(list => list.classList.add('hidden'));
+
+            // Remove 'active' class from all category items
+            const allCategories = document.querySelectorAll('.category-item');
+            allCategories.forEach(category => category.classList.remove('active'));
+
+            // Show the selected list by removing the 'hidden' class
+            const selectedList = document.getElementById(categoryId);
+            selectedList.classList.remove('hidden');
+
+            // Highlight the clicked category
+            clickedElement.classList.add('active');
+        }
+
+        // Function to show all categories
+        function showAllCategories(clickedElement) {
+            // Show all bookmark lists
+            const allLists = document.querySelectorAll('.bookmark-list');
+            allLists.forEach(list => list.classList.remove('hidden'));
+
+            // Remove 'active' class from all category items
+            const allCategories = document.querySelectorAll('.category-item');
+            allCategories.forEach(category => category.classList.remove('active'));
+
+            // Highlight the "All" button
+            clickedElement.classList.add('active');
+        }
+
+        // Search through all bookmarks dynamically
+        function filterBookmarks() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const bookmarks = document.querySelectorAll('.bookmark-item');
+            bookmarks.forEach(bookmark => {
+                const name = bookmark.querySelector('.bookmark-name').textContent.toLowerCase();
+                const description = bookmark.querySelector('.bookmark-description').textContent.toLowerCase();
+                if (name.includes(query) || description.includes(query)) {
+                    bookmark.style.display = 'block';
+                } else {
+                    bookmark.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
