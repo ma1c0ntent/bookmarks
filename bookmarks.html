@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="version" content="1.0.0">
     <title>My Bookmarks</title>
     <style>
         /* General Styling */
@@ -34,10 +35,10 @@
         .category-bar {
             display: flex;
             justify-content: center;
-            background: linear-gradient(45deg, #6ecefb, #73e8f4);
+            background: linear-gradient(45deg, #1a5490, #2d5aa0);
             padding: 12px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             margin-bottom: 25px;
         }
 
@@ -49,18 +50,39 @@
             border-radius: 8px;
             transition: transform 0.3s ease, background-color 0.3s ease;
             margin: 0 12px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .category-item:hover {
-            background: #2d89ef;
+            background: #005a9e;
             transform: scale(1.05);
         }
 
         .category-item.active {
-            background: #0078d4;
+            background: #004578;
             color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-count {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            min-width: 24px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .category-item.active .category-count {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .category-item:hover .category-count {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Bookmark List */
@@ -111,27 +133,225 @@
             margin-top: 5px;
         }
 
+        /* Tags */
+        .bookmark-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #90caf9;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .tag:hover {
+            background: #bbdefb;
+            border-color: #64b5f6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag.active {
+            background: #1976d2;
+            color: #fff;
+            border-color: #1976d2;
+        }
+
+        .tag.active:hover {
+            background: #1565c0;
+            border-color: #1565c0;
+        }
+
+        /* Active Tag Filter Display */
+        .active-tag-filter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+        }
+
+        .active-tag-filter.hidden {
+            display: none;
+        }
+
+        .active-tag-filter-text {
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .clear-tag-filter {
+            padding: 4px 12px;
+            background: #ffc107;
+            color: #856404;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+
+        .clear-tag-filter:hover {
+            background: #ffb300;
+        }
+
         /* Search Box */
         .search-box {
             text-align: center;
             margin: 20px 0;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 600px;
         }
 
         .search-input {
             width: 100%;
-            max-width: 600px;
-            padding: 12px;
+            padding: 12px 40px 12px 12px;
             font-size: 1rem;
             border: 2px solid #b6ddfc;
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
             transition: border 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
         }
 
         .search-input:focus {
             border: 2px solid #0078d4;
             box-shadow: 0 0 8px rgba(0, 120, 212, 0.4);
             outline: none;
+        }
+
+        /* Clear Search Button */
+        .clear-search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 1.2rem;
+            color: #888;
+            opacity: 0;
+            transition: opacity 0.2s ease, color 0.2s ease;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .clear-search-btn.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .clear-search-btn:hover {
+            color: #0078d4;
+        }
+
+        .clear-search-btn:focus {
+            outline: 2px solid #0078d4;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Highlight search terms */
+        .highlight {
+            background-color: #fff176;
+            color: #000;
+            font-weight: 600;
+            padding: 2px 4px;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sort Controls */
+        .sort-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .sort-label {
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            border: 2px solid #b6ddfc;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #333;
+            cursor: pointer;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            min-width: 180px;
+        }
+
+        .sort-select:focus {
+            border: 2px solid #0078d4;
+            box-shadow: 0 0 8px rgba(0, 120, 212, 0.4);
+            outline: none;
+        }
+
+        .sort-select:hover {
+            border-color: #0078d4;
+        }
+
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            margin: 30px 0;
+            display: none;
+            background: #ffffff;
+            border: 2px dashed #d1e3f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .no-results-message {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .no-results-suggestion {
+            font-size: 0.95rem;
+            color: #888;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -141,16 +361,53 @@
         
         <!-- Search Box -->
         <div class="search-box">
-            <input id="searchInput" class="search-input" type="text" placeholder="Search bookmarks..." onkeyup="filterBookmarks()">
+            <input id="searchInput" class="search-input" type="text" placeholder="Search bookmarks..." autocomplete="off" onkeyup="handleSearchInput(event)" onkeydown="handleSearchKeydown(event)" oninput="updateClearButton()">
+            <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()" aria-label="Clear search" title="Clear search (Esc)">×</button>
+        </div>
+
+        <!-- Sort Controls -->
+        <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <select id="sortSelect" class="sort-select" onchange="applySort()">
+                <option value="default">Default (Original Order)</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="category">Category</option>
+            </select>
         </div>
 
         <!-- Horizontal Category Bar -->
         <div class="category-bar">
-            <div class="category-item" onclick="showAllCategories(this)">All</div>
-            <div class="category-item" onclick="showOnlyCategory('Documentation', this)">Documentation</div>
-            <div class="category-item" onclick="showOnlyCategory('News', this)">News</div>
-            <div class="category-item" onclick="showOnlyCategory('Training Resources', this)">Training Resources</div>
+            <div class="category-item" onclick="showAllCategories(this)">
+                All
+                <span class="category-count" id="count-all">0</span>
+            </div>
+            <div class="category-item" onclick="showOnlyCategory('Documentation', this)">
+                Documentation
+                <span class="category-count" id="count-Documentation">0</span>
+            </div>
+            <div class="category-item" onclick="showOnlyCategory('News', this)">
+                News
+                <span class="category-count" id="count-News">0</span>
+            </div>
+            <div class="category-item" onclick="showOnlyCategory('Training Resources', this)">
+                Training Resources
+                <span class="category-count" id="count-Training Resources">0</span>
+            </div>
             
+        </div>
+
+        <!-- Active Tag Filter Display -->
+        <div id="activeTagFilter" class="active-tag-filter hidden">
+            <span class="active-tag-filter-text">Filtering by tag: <strong id="activeTagName"></strong></span>
+            <button class="clear-tag-filter" onclick="clearTagFilter()">Clear Filter</button>
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="no-results">
+            <div class="no-results-icon">🔍</div>
+            <div class="no-results-message">No bookmarks found</div>
+            <div class="no-results-suggestion">Try adjusting your search terms or selecting a different category</div>
         </div>
 
         <!-- Bookmark Dropdowns -->
@@ -161,46 +418,109 @@
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://learning.cisa.gov/login/index.php" target="_blank">CISA</a>
                 <div class="bookmark-description">Cybersecurity & Infrastructure Security Agency</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                    <span class="tag" onclick="filterByTag('government', this)">#government</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://rol.redhat.com/rol/app/" target="_blank">Red Hat Learning</a>
                 <div class="bookmark-description">Red Hat Open Learning</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('linux', this)">#linux</span>
+                    <span class="tag" onclick="filterByTag('redhat', this)">#redhat</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://securitytraining.dcsa.mil/login/index.php" target="_blank">STEPP (Formerly  CDSE)</a>
                 <div class="bookmark-description">Security Training, Education, and Professionalization Portal</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                    <span class="tag" onclick="filterByTag('government', this)">#government</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.geeksforgeeks.org/" target="_blank">Geeks for Geeks</a>
                 <div class="bookmark-description">All-in-One Learning Portal. It contains well written, well thought and well explained computer science and programming articles, quizzes and practice/competitive programing/company interview Questions.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('algorithms', this)">#algorithms</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://tryhackme.com/" target="_blank">TryHackMe</a>
                 <div class="bookmark-description">Online platform for learning cybersecurity through hands-on virtual rooms and challenges.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.hackthebox.com/" target="_blank">Hack The Box</a>
                 <div class="bookmark-description">Online platform for practicing penetration testing and cybersecurity skills through realistic scenarios.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('penetration-testing', this)">#penetration-testing</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.cybrary.it/" target="_blank">Cybrary</a>
                 <div class="bookmark-description">Free and paid cybersecurity training platform with courses, labs, and certification prep.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                    <span class="tag" onclick="filterByTag('certification', this)">#certification</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://learn.microsoft.com/" target="_blank">Microsoft Learn</a>
                 <div class="bookmark-description">Free Microsoft training platform with hands-on learning paths, modules, and certifications.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('microsoft', this)">#microsoft</span>
+                    <span class="tag" onclick="filterByTag('certification', this)">#certification</span>
+                    <span class="tag" onclick="filterByTag('cloud', this)">#cloud</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.freecodecamp.org/" target="_blank">freeCodeCamp</a>
                 <div class="bookmark-description">Free online coding bootcamp with interactive lessons, projects, and certifications in web development and more.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                    <span class="tag" onclick="filterByTag('web-development', this)">#web-development</span>
+                    <span class="tag" onclick="filterByTag('certification', this)">#certification</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.pluralsight.com/" target="_blank">Pluralsight</a>
                 <div class="bookmark-description">Online technology learning platform with courses on IT, development, cybersecurity, and cloud computing.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('cloud', this)">#cloud</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://aws.amazon.com/training/" target="_blank">AWS Training and Certification</a>
                 <div class="bookmark-description">Official Amazon Web Services training resources, courses, and certification programs.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('training', this)">#training</span>
+                    <span class="tag" onclick="filterByTag('aws', this)">#aws</span>
+                    <span class="tag" onclick="filterByTag('cloud', this)">#cloud</span>
+                    <span class="tag" onclick="filterByTag('certification', this)">#certification</span>
+                    <span class="tag" onclick="filterByTag('devops', this)">#devops</span>
+                </div>
             </div>
         </div>
 
@@ -209,98 +529,242 @@
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://semver.org/spec/v2.0.0.html" target="_blank">Semantic Versioning 2.0.0</a>
                 <div class="bookmark-description">Semantic Versioning is a structured versioning system that uses a three-part number format: MAJOR.MINOR.PATCH</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('versioning', this)">#versioning</span>
+                    <span class="tag" onclick="filterByTag('standards', this)">#standards</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://keepachangelog.com/en/1.0.0/" target="_blank">Keep a Changelog</a>
                 <div class="bookmark-description">Community-driven initiative offering guidelines for creating clear, structured, and categorized changelogs that enhance transparency and communication about project updates.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('changelog', this)">#changelog</span>
+                    <span class="tag" onclick="filterByTag('standards', this)">#standards</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://stackoverflow.com" target="_blank">Stack Overflow</a>
                 <div class="bookmark-description">Community Q&A for programmers.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                    <span class="tag" onclick="filterByTag('qa', this)">#qa</span>
+                    <span class="tag" onclick="filterByTag('community', this)">#community</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://github.com" target="_blank">GitHub</a>
                 <div class="bookmark-description">Code collaboration and hosting platform.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('git', this)">#git</span>
+                    <span class="tag" onclick="filterByTag('version-control', this)">#version-control</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                    <span class="tag" onclick="filterByTag('collaboration', this)">#collaboration</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://learn.microsoft.com/en-us/powershell" target="_blank">PowerShell Docs</a>
                 <div class="bookmark-description">Microsoft's official PowerShell documentation.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('powershell', this)">#powershell</span>
+                    <span class="tag" onclick="filterByTag('microsoft', this)">#microsoft</span>
+                    <span class="tag" onclick="filterByTag('scripting', this)">#scripting</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a>
                 <div class="bookmark-description">Mozilla Developer Network's web documentation.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('web-development', this)">#web-development</span>
+                    <span class="tag" onclick="filterByTag('javascript', this)">#javascript</span>
+                    <span class="tag" onclick="filterByTag('html', this)">#html</span>
+                    <span class="tag" onclick="filterByTag('css', this)">#css</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://docs.microsoft.com/en-us/dotnet" target="_blank">.NET Docs</a>
                 <div class="bookmark-description">Microsoft's official .NET documentation.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('dotnet', this)">#dotnet</span>
+                    <span class="tag" onclick="filterByTag('microsoft', this)">#microsoft</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://quickref.me/" target="_blank">Quick Reference Cheatsheets</a>
                 <div class="bookmark-description">Cheatsheets and quick references for various programming languages, commands, and tools.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('cheatsheet', this)">#cheatsheet</span>
+                    <span class="tag" onclick="filterByTag('reference', this)">#reference</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://quickref.me/chmod.html" target="_blank">CHMOD Cheatsheet</a>
                 <div class="bookmark-description">Quick Reference cheat sheet provides brief overview of file permissions, and the operation of the chmod command. </div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('cheatsheet', this)">#cheatsheet</span>
+                    <span class="tag" onclick="filterByTag('linux', this)">#linux</span>
+                    <span class="tag" onclick="filterByTag('permissions', this)">#permissions</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://quickref.me/awk" target="_blank">AWK Cheatsheet</a>
                 <div class="bookmark-description">Quick reference cheat sheet to the GNU awk, which covers commonly used awk expressions and commands.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('cheatsheet', this)">#cheatsheet</span>
+                    <span class="tag" onclick="filterByTag('linux', this)">#linux</span>
+                    <span class="tag" onclick="filterByTag('scripting', this)">#scripting</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://docs.python.org/3/library/logging.html#logging.Logger" target="_blank">Python Logging Module</a>
                 <div class="bookmark-description">This module defines functions and classes which implement a flexible event logging system for applications and libraries.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('python', this)">#python</span>
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                    <span class="tag" onclick="filterByTag('logging', this)">#logging</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://docs.python.org/3/library/argparse.html#" target="_blank">Python Argparse Module</a>
                 <div class="bookmark-description">This module makes it easy to write user-friendly command-line interfaces. The program defines what argument ir requires, and argparse will figure out hwo to parse those out of sys.argv.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('python', this)">#python</span>
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                    <span class="tag" onclick="filterByTag('cli', this)">#cli</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://quickref.me/regex" target="_blank">Regex Cheatsheet</a>
                 <div class="bookmark-description">Quick reference cheat sheet for regular expressions (regex), including symbols, ranges, grouping, assertions and some sample patterns to get you started.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('cheatsheet', this)">#cheatsheet</span>
+                    <span class="tag" onclick="filterByTag('regex', this)">#regex</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://regex101.com/" target="_blank">Regex Tester</a>
                 <div class="bookmark-description">A website used to learn, develop, and test regular expressions in multiple languages.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('regex', this)">#regex</span>
+                    <span class="tag" onclick="filterByTag('testing', this)">#testing</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://docs.ansible.com/" target="_blank">Ansible Documentation</a>
                 <div class="bookmark-description">Ansible's official community documentation.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('ansible', this)">#ansible</span>
+                    <span class="tag" onclick="filterByTag('devops', this)">#devops</span>
+                    <span class="tag" onclick="filterByTag('automation', this)">#automation</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://docs.splunk.com/Documentation/Splunk/9.4.2/Admin/Inputsconf" target="_blank">Splunk Inputs Conf</a>
                 <div class="bookmark-description">Splunk's Official documentation for using the inputs configuration file. It also goes over how to configure the different monitor types (parsers).</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('splunk', this)">#splunk</span>
+                    <span class="tag" onclick="filterByTag('logging', this)">#logging</span>
+                    <span class="tag" onclick="filterByTag('monitoring', this)">#monitoring</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.nist.gov/publications/search?ta%5B0%5D=249421" target="_blank">NIST Special Publications</a>
                 <div class="bookmark-description">This publications database includes many of the most recent publications of the National Institute of Standards and Technology  (NIST).</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('standards', this)">#standards</span>
+                    <span class="tag" onclick="filterByTag('government', this)">#government</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://attack.mitre.org/" target="_blank">MITRE ATT&CK</a>
                 <div class="bookmark-description">MITRE's ATT&CK framework for incident response.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('framework', this)">#framework</span>
+                    <span class="tag" onclick="filterByTag('incident-response', this)">#incident-response</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://docs.docker.com/" target="_blank">Docker Documentation</a>
                 <div class="bookmark-description">Official Docker documentation for containerization platform.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('docker', this)">#docker</span>
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('devops', this)">#devops</span>
+                    <span class="tag" onclick="filterByTag('containers', this)">#containers</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://kubernetes.io/docs/home/" target="_blank">Kubernetes Documentation</a>
                 <div class="bookmark-description">Official Kubernetes documentation for container orchestration.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('kubernetes', this)">#kubernetes</span>
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('devops', this)">#devops</span>
+                    <span class="tag" onclick="filterByTag('containers', this)">#containers</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://git-scm.com/doc" target="_blank">Git Documentation</a>
                 <div class="bookmark-description">Official Git version control system documentation and reference.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('git', this)">#git</span>
+                    <span class="tag" onclick="filterByTag('version-control', this)">#version-control</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://docs.python.org/3/" target="_blank">Python 3 Documentation</a>
                 <div class="bookmark-description">Official Python 3 programming language documentation and library reference.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('python', this)">#python</span>
+                    <span class="tag" onclick="filterByTag('programming', this)">#programming</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://developer.hashicorp.com/terraform/docs" target="_blank">Terraform Documentation</a>
                 <div class="bookmark-description">Official Terraform documentation for infrastructure as code.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('terraform', this)">#terraform</span>
+                    <span class="tag" onclick="filterByTag('devops', this)">#devops</span>
+                    <span class="tag" onclick="filterByTag('infrastructure', this)">#infrastructure</span>
+                    <span class="tag" onclick="filterByTag('iac', this)">#iac</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.jenkins.io/doc/" target="_blank">Jenkins Documentation</a>
                 <div class="bookmark-description">Official Jenkins documentation for CI/CD automation server.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('documentation', this)">#documentation</span>
+                    <span class="tag" onclick="filterByTag('jenkins', this)">#jenkins</span>
+                    <span class="tag" onclick="filterByTag('devops', this)">#devops</span>
+                    <span class="tag" onclick="filterByTag('cicd', this)">#cicd</span>
+                    <span class="tag" onclick="filterByTag('automation', this)">#automation</span>
+                </div>
             </div>
         </div>
 
@@ -309,35 +773,219 @@
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.defensenews.com/" target="_blank">Defense News</a>
                 <div class="bookmark-description">Defense News is a global website and magazine about the politics, business and technology of defense, serving senior military and industry decision-makers.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('news', this)">#news</span>
+                    <span class="tag" onclick="filterByTag('defense', this)">#defense</span>
+                    <span class="tag" onclick="filterByTag('government', this)">#government</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.bleepingcomputer.com/" target="_blank">BleepingComputer</a>
                 <div class="bookmark-description">Technology news and support site covering cybersecurity, malware, and tech industry developments.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('news', this)">#news</span>
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                    <span class="tag" onclick="filterByTag('technology', this)">#technology</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://thehackernews.com/" target="_blank">The Hacker News</a>
                 <div class="bookmark-description">Leading cybersecurity news source covering hacks, vulnerabilities, and security research.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('news', this)">#news</span>
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://krebsonsecurity.com/" target="_blank">Krebs on Security</a>
                 <div class="bookmark-description">In-depth cybersecurity journalism by Brian Krebs, covering data breaches, cybercrime, and security research.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('news', this)">#news</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.cisa.gov/news-events/cybersecurity-advisories" target="_blank">CISA Cybersecurity Advisories</a>
                 <div class="bookmark-description">Official Cybersecurity and Infrastructure Security Agency alerts, advisories, and security bulletins.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('news', this)">#news</span>
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                    <span class="tag" onclick="filterByTag('government', this)">#government</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://www.darkreading.com/" target="_blank">Dark Reading</a>
                 <div class="bookmark-description">Information security news and analysis covering threats, vulnerabilities, and enterprise security strategies.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('news', this)">#news</span>
+                    <span class="tag" onclick="filterByTag('security', this)">#security</span>
+                    <span class="tag" onclick="filterByTag('cybersecurity', this)">#cybersecurity</span>
+                </div>
             </div>
             <div class="bookmark-item">
                 <a class="bookmark-name" href="https://arstechnica.com/" target="_blank">Ars Technica</a>
                 <div class="bookmark-description">Technology news site covering IT, science, policy, and technology culture with in-depth analysis.</div>
+                <div class="bookmark-tags">
+                    <span class="tag" onclick="filterByTag('news', this)">#news</span>
+                    <span class="tag" onclick="filterByTag('technology', this)">#technology</span>
+                    <span class="tag" onclick="filterByTag('science', this)">#science</span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Global variables
+        let activeTagFilter = null;
+        let currentSortOrder = 'default';
+
+        // Load sort preference from localStorage
+        function loadSortPreference() {
+            const savedSort = localStorage.getItem('bookmarkSortOrder');
+            if (savedSort) {
+                currentSortOrder = savedSort;
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) {
+                    sortSelect.value = savedSort;
+                }
+            }
+        }
+
+        // Save sort preference to localStorage
+        function saveSortPreference(sortOrder) {
+            localStorage.setItem('bookmarkSortOrder', sortOrder);
+        }
+
+        // Store original order indices for bookmarks
+        function storeOriginalOrder() {
+            const categories = ['Training Resources', 'Documentation', 'News'];
+            categories.forEach(categoryId => {
+                const categoryList = document.getElementById(categoryId);
+                if (!categoryList) return;
+                
+                const bookmarks = categoryList.querySelectorAll('.bookmark-item');
+                bookmarks.forEach((bookmark, index) => {
+                    if (!bookmark.hasAttribute('data-original-index')) {
+                        bookmark.setAttribute('data-original-index', index);
+                    }
+                });
+            });
+        }
+
+        // Sort bookmarks within a category
+        function sortBookmarksInCategory(categoryId, sortOrder) {
+            const categoryList = document.getElementById(categoryId);
+            if (!categoryList) return;
+
+            const bookmarks = Array.from(categoryList.querySelectorAll('.bookmark-item'));
+            
+            if (sortOrder === 'default') {
+                // Restore original order using stored indices
+                bookmarks.sort((a, b) => {
+                    const indexA = parseInt(a.getAttribute('data-original-index') || '0');
+                    const indexB = parseInt(b.getAttribute('data-original-index') || '0');
+                    return indexA - indexB;
+                });
+            } else {
+                // Sort by name
+                bookmarks.sort((a, b) => {
+                    const nameA = a.querySelector('.bookmark-name').textContent.trim().toLowerCase();
+                    const nameB = b.querySelector('.bookmark-name').textContent.trim().toLowerCase();
+                    
+                    if (sortOrder === 'name-asc') {
+                        return nameA.localeCompare(nameB);
+                    } else if (sortOrder === 'name-desc') {
+                        return nameB.localeCompare(nameA);
+                    }
+                    return 0;
+                });
+            }
+
+            // Re-append sorted bookmarks to maintain order
+            bookmarks.forEach(bookmark => {
+                categoryList.appendChild(bookmark);
+            });
+        }
+
+        // Apply sorting to all visible categories
+        function applySort() {
+            const sortSelect = document.getElementById('sortSelect');
+            if (!sortSelect) return;
+            
+            currentSortOrder = sortSelect.value;
+            saveSortPreference(currentSortOrder);
+
+            // Get all category lists
+            const categories = ['Training Resources', 'Documentation', 'News'];
+            
+            // Handle category sort (sort all categories alphabetically, then within each category)
+            if (currentSortOrder === 'category') {
+                categories.forEach(categoryId => {
+                    sortBookmarksInCategory(categoryId, 'name-asc');
+                });
+            } else {
+                // Sort all categories (whether visible or not) to maintain consistent order
+                categories.forEach(categoryId => {
+                    const categoryList = document.getElementById(categoryId);
+                    if (categoryList) {
+                        sortBookmarksInCategory(categoryId, currentSortOrder);
+                    }
+                });
+            }
+        }
+
+        // Filter bookmarks by tag
+        function filterByTag(tagName, clickedElement) {
+            // Toggle tag filter (if same tag clicked, clear filter)
+            if (activeTagFilter === tagName) {
+                clearTagFilter();
+                return;
+            }
+
+            // Set active tag filter
+            activeTagFilter = tagName;
+
+            // Update active tag indicator
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            clickedElement.classList.add('active');
+
+            // Show active tag filter banner
+            const activeTagFilterDiv = document.getElementById('activeTagFilter');
+            const activeTagNameSpan = document.getElementById('activeTagName');
+            activeTagNameSpan.textContent = '#' + tagName;
+            activeTagFilterDiv.classList.remove('hidden');
+
+            // Apply filters
+            filterBookmarks();
+            // Reapply sorting after filtering
+            applySort();
+        }
+
+        // Clear tag filter
+        function clearTagFilter() {
+            activeTagFilter = null;
+
+            // Remove active tag indicators
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+
+            // Hide active tag filter banner
+            const activeTagFilterDiv = document.getElementById('activeTagFilter');
+            activeTagFilterDiv.classList.add('hidden');
+
+            // Reapply filters
+            filterBookmarks();
+            // Reapply sorting after filtering
+            applySort();
+        }
+
         // Function to show only the selected category and collapse others
         function showOnlyCategory(categoryId, clickedElement) {
             // Collapse all bookmark lists
@@ -354,6 +1002,11 @@
 
             // Highlight the clicked category
             clickedElement.classList.add('active');
+            
+            // Reapply search filter to update visibility and no results message
+            filterBookmarks();
+            // Reapply sorting after filtering
+            applySort();
         }
 
         // Function to show all categories
@@ -368,22 +1021,394 @@
 
             // Highlight the "All" button
             clickedElement.classList.add('active');
+            
+            // Reapply search filter to update visibility and no results message
+            filterBookmarks();
+            // Reapply sorting after filtering
+            applySort();
+        }
+
+        // Update category counts based on visible/filtered bookmarks
+        function updateCategoryCounts() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const categories = {
+                'all': 0,
+                'Documentation': 0,
+                'News': 0,
+                'Training Resources': 0
+            };
+            
+            const bookmarks = document.querySelectorAll('.bookmark-item');
+            
+            bookmarks.forEach(bookmark => {
+                const name = bookmark.querySelector('.bookmark-name').textContent.toLowerCase();
+                const description = bookmark.querySelector('.bookmark-description').textContent.toLowerCase();
+                
+                // Get tags for this bookmark
+                const tagsElement = bookmark.querySelector('.bookmark-tags');
+                let tags = [];
+                if (tagsElement) {
+                    tags = Array.from(tagsElement.querySelectorAll('.tag')).map(tag => 
+                        tag.textContent.toLowerCase().replace('#', '')
+                    );
+                }
+                
+                // Check if bookmark matches search query (name, description, or tags)
+                const searchInTags = tags.some(tag => tag.includes(query));
+                const matchesSearch = query === '' || name.includes(query) || description.includes(query) || searchInTags;
+                
+                // Check if bookmark matches tag filter
+                const matchesTagFilter = activeTagFilter === null || tags.includes(activeTagFilter);
+                
+                // Get the category ID from the parent list
+                const parentList = bookmark.closest('.bookmark-list');
+                if (!parentList) return;
+                
+                const categoryId = parentList.id;
+                
+                // Only count bookmarks that match the search (if searching) and tag filter (if filtering)
+                if (matchesSearch && matchesTagFilter && categories.hasOwnProperty(categoryId)) {
+                    categories[categoryId]++;
+                    categories['all']++;
+                }
+            });
+            
+            // Update count displays
+            document.getElementById('count-all').textContent = categories['all'];
+            document.getElementById('count-Documentation').textContent = categories['Documentation'];
+            document.getElementById('count-News').textContent = categories['News'];
+            document.getElementById('count-Training Resources').textContent = categories['Training Resources'];
+        }
+
+        // Debounce timer for search
+        let searchDebounceTimer = null;
+
+        // Update clear button visibility
+        function updateClearButton() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchInput && clearBtn) {
+                if (searchInput.value.trim().length > 0) {
+                    clearBtn.classList.add('visible');
+                } else {
+                    clearBtn.classList.remove('visible');
+                }
+            }
+        }
+
+        // Clear search input
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchInput) {
+                searchInput.value = '';
+                if (clearBtn) {
+                    clearBtn.classList.remove('visible');
+                }
+                // Remove highlights
+                removeHighlights();
+                filterBookmarks();
+            }
+        }
+
+        // Handle keyboard events in search input
+        function handleSearchKeydown(event) {
+            // Clear search on Esc key
+            if (event.key === 'Escape' || event.keyCode === 27) {
+                event.preventDefault();
+                clearSearch();
+                // Blur the input to remove focus
+                event.target.blur();
+            }
+        }
+
+        // Handle search input with debouncing
+        function handleSearchInput(event) {
+            updateClearButton();
+            
+            // Clear existing timer
+            if (searchDebounceTimer) {
+                clearTimeout(searchDebounceTimer);
+            }
+            
+            // Set new timer (300ms debounce)
+            searchDebounceTimer = setTimeout(() => {
+                filterBookmarks();
+            }, 300);
+        }
+
+        // Remove highlight spans from text
+        function removeHighlights() {
+            const highlights = document.querySelectorAll('.highlight');
+            highlights.forEach(highlight => {
+                const parent = highlight.parentNode;
+                parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+                parent.normalize(); // Merge adjacent text nodes
+            });
+        }
+
+        // Highlight search terms in text
+        function highlightSearchTerms(text, searchQuery) {
+            if (!text || !text.trim()) {
+                return '';
+            }
+            
+            if (!searchQuery || !searchQuery.trim()) {
+                return escapeHtml(text);
+            }
+            
+            try {
+                // Escape regex special characters in search query (not HTML)
+                const escapedQuery = escapeRegex(searchQuery);
+                
+                // Create regex for case-insensitive matching in original text
+                const regex = new RegExp(`(${escapedQuery})`, 'gi');
+                
+                // Check if there's a match in the original text
+                if (!regex.test(text)) {
+                    return escapeHtml(text);
+                }
+                
+                // Reset regex
+                regex.lastIndex = 0;
+                
+                // Split text by matches
+                const parts = [];
+                let lastIndex = 0;
+                let match;
+                
+                while ((match = regex.exec(text)) !== null) {
+                    // Add text before match
+                    if (match.index > lastIndex) {
+                        parts.push({
+                            text: text.substring(lastIndex, match.index),
+                            isMatch: false
+                        });
+                    }
+                    // Add match
+                    parts.push({
+                        text: match[0],
+                        isMatch: true
+                    });
+                    lastIndex = regex.lastIndex;
+                    
+                    // Prevent infinite loop
+                    if (match[0].length === 0) {
+                        regex.lastIndex++;
+                        if (regex.lastIndex >= text.length) break;
+                    }
+                }
+                
+                // Add remaining text
+                if (lastIndex < text.length) {
+                    parts.push({
+                        text: text.substring(lastIndex),
+                        isMatch: false
+                    });
+                }
+                
+                // If no parts, return escaped text
+                if (parts.length === 0) {
+                    return escapeHtml(text);
+                }
+                
+                // Build result: escape non-matches, highlight matches
+                return parts.map(part => {
+                    if (part.isMatch) {
+                        return `<span class="highlight">${escapeHtml(part.text)}</span>`;
+                    }
+                    return escapeHtml(part.text);
+                }).join('');
+            } catch (e) {
+                // If regex fails, return escaped original text
+                return escapeHtml(text);
+            }
+        }
+
+        // Escape special regex characters
+        function escapeRegex(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Escape HTML characters
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Search through all bookmarks dynamically
         function filterBookmarks() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const bookmarks = document.querySelectorAll('.bookmark-item');
+            const noResultsMessage = document.getElementById('noResults');
+            let visibleCount = 0;
+            
             bookmarks.forEach(bookmark => {
-                const name = bookmark.querySelector('.bookmark-name').textContent.toLowerCase();
-                const description = bookmark.querySelector('.bookmark-description').textContent.toLowerCase();
-                if (name.includes(query) || description.includes(query)) {
+                const nameElement = bookmark.querySelector('.bookmark-name');
+                const descriptionElement = bookmark.querySelector('.bookmark-description');
+                const nameLink = nameElement ? nameElement.querySelector('a') : null;
+                
+                // Get original text (from data attribute - should always be set after initialization)
+                let originalName = '';
+                let originalDescription = '';
+                
+                if (nameLink) {
+                    // Always get from data attribute if available
+                    if (nameLink.hasAttribute('data-original-text')) {
+                        originalName = nameLink.getAttribute('data-original-text');
+                    } else {
+                        // Fallback: get clean text from textContent (strips any HTML/highlights)
+                        originalName = nameLink.textContent.trim();
+                        // Store it for future use
+                        if (originalName) {
+                            nameLink.setAttribute('data-original-text', originalName);
+                        }
+                    }
+                }
+                
+                if (descriptionElement) {
+                    // Always get from data attribute if available
+                    if (descriptionElement.hasAttribute('data-original-text')) {
+                        originalDescription = descriptionElement.getAttribute('data-original-text');
+                    } else {
+                        // Fallback: get clean text from textContent (strips any HTML/highlights)
+                        originalDescription = descriptionElement.textContent.trim();
+                        // Store it for future use
+                        if (originalDescription) {
+                            descriptionElement.setAttribute('data-original-text', originalDescription);
+                        }
+                    }
+                }
+                
+                const name = originalName.toLowerCase();
+                const description = originalDescription.toLowerCase();
+                
+                // Get tags for this bookmark
+                const tagsElement = bookmark.querySelector('.bookmark-tags');
+                let tags = [];
+                if (tagsElement) {
+                    tags = Array.from(tagsElement.querySelectorAll('.tag')).map(tag => 
+                        tag.textContent.toLowerCase().replace('#', '')
+                    );
+                }
+                
+                // Check if bookmark matches search query (name, description, or tags)
+                const searchInTags = tags.some(tag => tag.includes(query));
+                const matchesSearch = query === '' || name.includes(query) || description.includes(query) || searchInTags;
+                
+                // Check if bookmark matches tag filter
+                const matchesTagFilter = activeTagFilter === null || tags.includes(activeTagFilter);
+                
+                // Check if bookmark's parent category is visible
+                const parentList = bookmark.closest('.bookmark-list');
+                const isCategoryVisible = parentList && !parentList.classList.contains('hidden');
+                
+                // Show bookmark only if it matches search AND tag filter AND its category is visible
+                if (matchesSearch && matchesTagFilter && isCategoryVisible) {
                     bookmark.style.display = 'block';
+                    visibleCount++;
+                    
+                    // Apply highlighting if there's a search query
+                    if (query !== '') {
+                        // Always try to highlight - function will return escaped original text if no match
+                        if (nameLink && originalName) {
+                            const highlightedName = highlightSearchTerms(originalName, query);
+                            if (highlightedName) {
+                                nameLink.innerHTML = highlightedName;
+                            }
+                        }
+                        
+                        if (descriptionElement && originalDescription) {
+                            const highlightedDescription = highlightSearchTerms(originalDescription, query);
+                            if (highlightedDescription) {
+                                descriptionElement.innerHTML = highlightedDescription;
+                            }
+                        }
+                    } else {
+                        // No search query - restore original text without highlights
+                        if (nameLink && originalName) {
+                            nameLink.textContent = originalName;
+                        }
+                        if (descriptionElement && originalDescription) {
+                            descriptionElement.textContent = originalDescription;
+                        }
+                    }
                 } else {
                     bookmark.style.display = 'none';
+                    // When hidden, restore original text (in case it was highlighted)
+                    if (query === '') {
+                        if (nameLink && originalName) {
+                            nameLink.textContent = originalName;
+                        }
+                        if (descriptionElement && originalDescription) {
+                            descriptionElement.textContent = originalDescription;
+                        }
+                    }
+                }
+            });
+            
+            // Show "no results" message if there's a search query or tag filter and no visible bookmarks
+            if ((query !== '' || activeTagFilter !== null) && visibleCount === 0) {
+                noResultsMessage.classList.add('show');
+            } else {
+                noResultsMessage.classList.remove('show');
+            }
+            
+            // Update category counts after filtering
+            updateCategoryCounts();
+            
+            // Note: Sorting is applied separately after filtering to maintain visibility state
+            // applySort() is called explicitly after filterBookmarks() in category/tag functions
+        }
+
+        // Store original text for all bookmarks (for highlighting)
+        function storeOriginalText() {
+            const bookmarks = document.querySelectorAll('.bookmark-item');
+            bookmarks.forEach(bookmark => {
+                const nameElement = bookmark.querySelector('.bookmark-name');
+                const descriptionElement = bookmark.querySelector('.bookmark-description');
+                const nameLink = nameElement ? nameElement.querySelector('a') : null;
+                
+                if (nameLink && !nameLink.hasAttribute('data-original-text')) {
+                    // textContent always returns plain text (strips HTML tags)
+                    // So it will be clean even if there are highlight spans
+                    const cleanText = nameLink.textContent.trim();
+                    if (cleanText) {
+                        nameLink.setAttribute('data-original-text', cleanText);
+                    }
+                }
+                
+                if (descriptionElement && !descriptionElement.hasAttribute('data-original-text')) {
+                    // textContent always returns plain text (strips HTML tags)
+                    const cleanText = descriptionElement.textContent.trim();
+                    if (cleanText) {
+                        descriptionElement.setAttribute('data-original-text', cleanText);
+                    }
                 }
             });
         }
+
+        // Initialize on page load
+        // Since script is at end of body, DOM is already ready
+        (function() {
+            // Store original text for highlighting (must be first)
+            storeOriginalText();
+            
+            // Store original order first (before any sorting)
+            storeOriginalOrder();
+            
+            // Load saved sort preference
+            loadSortPreference();
+            
+            // Apply initial sort
+            if (currentSortOrder !== 'default') {
+                applySort();
+            }
+            
+            // Initialize counts
+            updateCategoryCounts();
+        })();
     </script>
 </body>
 </html>
