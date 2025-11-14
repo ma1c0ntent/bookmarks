@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved highlight styling with better visibility (lighter yellow background, shadow effect)
 - Disabled browser autocomplete on search input for cleaner user experience
 
-[1.1.0]: https://github.com/yourusername/bookmarks/releases/tag/v1.1.0
+[1.1.0]: https://github.com/ma1c0ntent/bookmarks/releases/tag/v1.1.0
 
 ## [1.0.0] - 2025-11-13
 
@@ -56,5 +56,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved search functionality to respect category filters
 - Enhanced user experience with proper "no results" feedback
 
-[1.0.0]: https://github.com/yourusername/bookmarks/releases/tag/v1.0.0
+[1.0.0]: https://github.com/ma1c0ntent/bookmarks/releases/tag/v1.0.0
+
 
