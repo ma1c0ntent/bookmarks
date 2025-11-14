@@ -20,6 +20,9 @@ A beautiful, standalone HTML bookmark manager with category filtering, tag-based
 - **Fully Customizable**: Easy to add, edit, or remove bookmarks directly in the HTML
 - **Persistent Preferences**: Sort order is saved and restored automatically using localStorage
 
+<img src="images/img2.png" alt="Search filtering and highlighting">
+<img src="images/img3.png" alt="tag filtering">
+
 ## 🚀 Quick Start
 
 1. Download or clone this repository
