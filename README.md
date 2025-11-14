@@ -4,6 +4,8 @@
 
 A beautiful, standalone HTML bookmark manager with category filtering, tag-based organization, real-time search with highlighting, and sorting options. No server required—just open the HTML file in your browser and start organizing your favorite links.
 
+<img src="images/img1.png" alt="Bookmarks page">   
+
 ## ✨ Features
 
 - **Category-based Organization**: Organize bookmarks into categories (Documentation, News, Training Resources, etc.)
